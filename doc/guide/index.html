@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>trees</title>
+    <link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://docs.kissyui.com/1.4/source/guideline/templates/assets/com-prettify.css">
+    <link rel="stylesheet" href="http://docs.kissyui.com/1.4/source/guideline/templates/assets/com.css">
+    <script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
+    <script src="http://cdn.staticfile.org/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://cdn.staticfile.org/prettify/r298/prettify.min.js"></script>
+    <script src="http://g.tbcdn.cn/kissy/k/1.4.8/seed-min.js" data-config="{combine:true}"></script>
+  </head>
+  <body data-spy="scroll" data-target=".bs-docs-sidebar">
+    <div id="header"><a href="http://docs.kissyui.com/" class="logo">kissy</a>
+      <nav><a href="http://docs.kissyui.com/1.4/docs/html/coms.html">优秀组件推荐</a></nav>
+    </div>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3 bs-docs-sidebar">
+          <ul data-spy="affix" data-offset-top="0" class="nav nav-list bs-docs-sidenav"></ul>
+        </div>
+        <div class="span9 bs-docs-content">
+          <h1 data-id="undefined" class="title">trees</h1>
+          <p class="author-wrapper"><span>组件有问题？旺旺联系作者：</span><a href="https://github.com/undefined" target="_blank" data-name="桐人" class="author"><img src="http://0.gravatar.com/avatar/5b266989e57570435088513ae8374444?s=60" alt="桐人"></a><span class="author-name">桐人</span>
+          </p>
+          <div class="common-link"><a href="../demo/index.html" target="_blank" class="demo">示例</a><a href="https://github.com/kissygalleryteam/trees" target="_blank" class="source">源码</a></div>
+          <p class="com-info"><span class="info-label">View</span><span data-com="trees" class="J_View">1354</span></p>
+          <p class="com-info"><span class="info-label">所属分类</span><a href="http://kpm.taobao.net/list/菜单&amp;树">菜单&amp;树</a><span class="info-label tag-label">组件标签</span><a href="http://kpm.taobao.net/list/tag?tag=1.0.0">1.0.0</a>
+          </p>
+          <p class="com-info"><span class="info-label">kissy版本</span><span>1.4.X</span>
+          </p><h2 id="-">综述</h2>
+<p>Trees - 树形数据管理与展现</p>
+<ul>
+<li>版本：2.0.0</li>
+<li>作者：桐人</li>
+<li>demo：<a href="http://kg.kissyui.com/trees/2.0.0/demo/index.html">http://kg.kissyui.com/trees/2.0.0/demo/index.html</a></li>
+</ul>
+<h3 id="-">特色</h3>
+<ul>
+<li>丰富API，灵活的配置项，基于<strong>Trees.Store</strong> 让你随心所欲操作所有树型结构数据，无所不能。</li>
+<li>统一的结果管理，多样的结果类型，基于<strong>Trees.Base</strong> 任你轻轻松松管理结果集。</li>
+<li>特色抽象的视图树，基于<strong>Trees.View</strong> 让级联类型的视图操作一路顺畅无阻。</li>
+<li>强大的级联列表选择框，基于<strong>Trees.List</strong> 让你定制符合任何业务需要的级联列表框。</li>
+</ul>
+<h3 id="-">组件结构</h3>
+<pre><code>Trees
+    |- Base            树的基类
+    |- Store        树形数据缓冲对象
+    |- ViewStore    视图树数据缓冲对象 继承于 Trees.Store
+    |- View            视图树基类 继承于 Trees.Base
+    |- List            列表树 继承于 Trees.View
+    |- SearchSelect    带搜索的多级联动下拉框 继承于 Trees.View
+    |- Select        多级联动下拉框 继承于 Trees.View
+    |- City            城市联动框 继承于 Trees.Select
+    |- Tree            标准树 继承于 Trees.Base &amp; KISSY.Tree
+</code></pre><h2 id="-">初始化组件</h2>
+<pre><code>S.use(&#39;kg/trees/2.0.0/index&#39;, function (S, Trees) {
+    var list = new Trees.List(),
+         select = new Trees.Select(),
+         city = new Trees.city();
+});
+</code></pre><h2 id="trees-store">Trees.Store</h2>
+<ul>
+<li>模块名：<code>kg/trees/2.0.0/store</code></li>
+<li>所有树形数据均可以用本模块来处理。</li>
+<li>本模块提供了<strong>数据加载</strong>、<strong>数据遍历</strong>等基础功能</li>
+</ul>
+<h3 id="config-">config 属性配置</h3>
+<h4 id="url-string">url - String</h4>
+<ul>
+<li>数据异步读取url（选填，不填的话可以手动设置树的数据）</li>
+<li>Default: <code>&#39;&#39;</code></li>
+</ul>
+<h4 id="param-object">param - Object</h4>
+<ul>
+<li>数据读取的初始化参数，与 url 配合适用（选填）</li>
+<li>Default: <code>{}</code></li>
+</ul>
+<h4 id="data-array">data - Array</h4>
+<ul>
+<li>给store初始化用的数据</li>
+<li>Default: <code>[]</code></li>
+</ul>
+<h4 id="idkey-string">idKey - String</h4>
+<ul>
+<li>节点数据中，id的key（选填, 不填的话默认是 adapterForNode.id）</li>
+<li>Default: <code>adapterForNode.id</code></li>
+</ul>
+<h4 id="isjsonp-boolean">isJsonp - Boolean</h4>
+<ul>
+<li>是否用jsonp形式发送请求</li>
+<li>Default: <code>false</code></li>
+</ul>
+<h4 id="autoload-boolean">autoLoad - Boolean</h4>
+<ul>
+<li>数据是否自动加载（选填）</li>
+<li>Default: <code>false</code></li>
+</ul>
+<h4 id="requesttype-string">requestType - String</h4>
+<ul>
+<li>异步请求方式(&#39;get&#39;/&#39;post&#39;)，在jsonp方式下，不起作用，固定为get</li>
+<li>Default: <code>&#39;get&#39;</code></li>
+</ul>
+<h4 id="dataerrorfunc-function">dataErrorFunc - Function</h4>
+<ul>
+<li>当数据加载失败的回调方法（选填）</li>
+<li>Default: <code>alert(msg);</code></li>
+</ul>
+<h4 id="adapterfordata-object">adapterForData - Object</h4>
+<ul>
+<li>数据的适配器（选填）</li>
+<li>Default: <code>{ success: &#39;success&#39;, nodes: &#39;nodes&#39;, message: &#39;message&#39; }</code></li>
+</ul>
+<h4 id="adapterfornode-object">adapterForNode - Object</h4>
+<ul>
+<li>node数据的适配器（选填）</li>
+<li>Default: <code>{ id: &#39;id&#39;, value: &#39;value&#39;, children: &#39;children&#39;, parent: &#39;parent&#39;, isleaf: &#39;isleaf&#39; }</code></li>
+</ul>
+<h3 id="-">支持的方法</h3>
+<h4 id="getchildrenbynode-node-">getChildrenByNode(node)</h4>
+<ul>
+<li>获取节点的子节点列表</li>
+<li><code>node</code> - Object - 目标节点</li>
+<li>Returns: (Array)  子节点列表  </li>
+</ul>
+<h4 id="getchildrenbyid-id-">getChildrenById(id)</h4>
+<ul>
+<li>通过id 获取子节点列表</li>
+<li><code>id</code> - String|Number - 目标id。 若没有，则返回[]</li>
+<li>Returns: (Array)  子节点列表  </li>
+</ul>
+<h4 id="getchildrenbypath-path-">getChildrenByPath(path)</h4>
+<ul>
+<li>通过Path 获取子节点列表</li>
+<li><code>path</code> - Array - 目标path。 若没有，则返回 treeData</li>
+<li>Returns: (Array)  子节点列表  </li>
+</ul>
+<h4 id="getnodebyid-id-">getNodeById(id)</h4>
+<ul>
+<li>通过id 获取节点对象</li>
+<li><code>id</code> - String|Number - 目标id。 若没有，则返回空值</li>
+<li>Returns: (Object)  节点对象   </li>
+</ul>
+<h4 id="getnodebypath-path-">getNodeByPath(path)</h4>
+<ul>
+<li>通过Path 获取节点对象</li>
+<li><code>path</code> - Array - 目标path。 若没有，则返回空值</li>
+<li>Returns: (Object)  节点对象   </li>
+</ul>
+<h4 id="getleafsbyid-id-">getLeafsById(id)</h4>
+<ul>
+<li>根据id 获取节点的全部叶子节点</li>
+<li><code>id</code> - String|Number - 目标节点Id</li>
+<li>Returns: (Array)  叶子节点路径列表（pathNade）, 路径内不带当前节点，节点数据不带children属性   </li>
+</ul>
+<h4 id="getleafsbynode-node-">getLeafsByNode(node)</h4>
+<ul>
+<li>根据节点 获取节点的全部叶子节点</li>
+<li><code>node</code> - Object - 目标节点</li>
+<li>Returns: (Array)  叶子节点路径列表（pathNade）, 路径内不带当前节点，节点数据不带children属性 </li>
+</ul>
+<h4 id="getparentbyid-id-">getParentById(id)</h4>
+<ul>
+<li>通过id 获取该节点的父节点对象</li>
+<li><code>id</code> - String|Number - 目标节点Id</li>
+<li>Returns: (Object)  父节点对象  </li>
+</ul>
+<h4 id="getpathbyid-id-">getPathById(id)</h4>
+<ul>
+<li>通过id 获取节点路径</li>
+<li><code>id</code> - String|Number - 目标id。 若没有，则返回[]</li>
+<li>Returns: (Array)  节点路径   </li>
+</ul>
+<h4 id="gettreebylevel-level-">getTreeByLevel(level)</h4>
+<ul>
+<li>获取特定层级的树</li>
+<li><code>level</code> - Number - 目标层级 跟节点为0级，若获取根目录，则 level = 1</li>
+<li>Returns: (Array)  过滤后获取的数据    </li>
+</ul>
+<h4 id="gettreedata-">getTreeData()</h4>
+<ul>
+<li>获取树的数据</li>
+<li>Returns: (Array) 树数据     </li>
+</ul>
+<h4 id="settreedata-nodedata-id-">setTreeData(nodeData, [id])</h4>
+<ul>
+<li>手动填充树的数据 此方法会触发load事件</li>
+<li><code>nodeData</code> - Array - 带填充的节点列表</li>
+<li><code>id</code> - String|Number - 需要填充的节点id, (选填，若不填则当作整个树数据填充)</li>
+</ul>
+<h4 id="searchtree-searchtext-">searchTree(searchText)</h4>
+<ul>
+<li>通过文本搜索树 此方法会触发searchTree事件</li>
+<li><code>searchText</code> - String - 要搜索的文本</li>
+<li>Returns: (Object)  搜索结果     </li>
+</ul>
+<h4 id="traversetreebyid-id-">traverseTreeById(id)</h4>
+<ul>
+<li>遍历树，通过id搜索节点</li>
+<li><code>id</code> - String|Number - 目标id。 若没有，则返回的皆为空值</li>
+<li>Returns: (Object)  </li>
+</ul>
+<pre><code>    obj.path =&gt; 该节点的路径id 
+    obj.valuePath =&gt; 该节点的路经value 
+    obj.pathNode =&gt; 该节点的路经node 
+    obj.node =&gt; 该节点对象
+</code></pre><h4 id="traversetreebytext-text-">traverseTreeByText(text)</h4>
+<ul>
+<li>遍历树，通过text搜索节点列表</li>
+<li><code>text</code> - String - 目标文本。 若没有，则返回的皆为空值</li>
+<li>Returns: (Object)   obj.pathList =&gt; 路径id列表 obj.valuePathList =&gt; 路径value列表 obj.pathNodeList =&gt; 路径node列表，节点数据不带children属性 </li>
+</ul>
+<pre><code>    obj.pathList =&gt; 路径id列表 
+    obj.valuePathList =&gt; 路径value列表 
+    obj.pathNodeList =&gt; 路径node列表，节点数据不带children属性
+</code></pre><h4 id="load-param-url-func-istreedata-">load([param], [url], [func], [isTreeData])</h4>
+<ul>
+<li>加载树数据 此方法会触发load事件</li>
+<li><code>param</code> - Object|String - 参数对象 或 需要加载的id (不填则取默认的参数对象，若是String，则会用idKey配置参数对象)</li>
+<li><code>url</code> - String - 加载数据的url （选填，没有则取默认的url）</li>
+<li><code>func</code> - Function - 加载完成时需要回调的方法 （选填）</li>
+<li><code>isTreeData</code> - Boolean - 是否加载整树数据 （选填，默认为false）</li>
+</ul>
+<h4 id="initload-">initLoad()</h4>
+<ul>
+<li>初始化加载store</li>
+</ul>
+<h4 id="istreeready-node-func-">isTreeReady([node], [func])</h4>
+<ul>
+<li>检查树的数据是否加载完成</li>
+<li><code>node</code> - Object - 要检查的节点对象 （选填，不填则检查整个树对象）</li>
+<li><code>func</code> - Function - 若没有完成时，加载数据是需要回调的方法 （选填）</li>
+<li>Returns: (Boolean)  是否准备完成      </li>
+</ul>
+<h4 id="datafilter-data-">dataFilter(data)</h4>
+<ul>
+<li>将节点中的children属性过滤掉</li>
+<li><code>data</code> -  Array|Object - 需要过滤的数据: 节点 或节点列表</li>
+<li>Returns: (Array|Object)   过滤后的数据       </li>
+</ul>
+<h4 id="destroy-">destroy()</h4>
+<ul>
+<li>销毁对象</li>
+</ul>
+<h3 id="-">支持的事件</h3>
+<h4 id="load">load</h4>
+<ul>
+<li>数据加载完成时 触发此事件（load/setTreeData 都会触发)</li>
+<li><code>e.data</code> - 加载的数据</li>
+<li><code>e.id</code> - 所在节点的id</li>
+<li><code>e.param</code> - 加载的参数（setTreeData触发时没有此属性）</li>
+</ul>
+<h4 id="searchtree">searchTree</h4>
+<ul>
+<li>通过text遍历搜索树后 触发此事件</li>
+<li><code>e.text</code> - 搜索的文本值</li>
+<li><code>e.pathList</code> - 搜索的路径id集合</li>
+<li><code>e.valuePathList</code> - 搜索的路径value集合</li>
+<li><code>e.result</code> - 搜索结果</li>
+</ul>
+<h2 id="trees-base">Trees.Base</h2>
+<ul>
+<li>模块名：<code>kg/trees/2.0.0/base</code></li>
+<li>本模块提供了<strong>数据初始化</strong>、<strong>结果管理</strong>等组件基础功能。</li>
+</ul>
+<h3 id="config-">config 属性配置</h3>
+<h4 id="renderto-string">renderTo - String</h4>
+<ul>
+<li>树渲染dom的容器ID (必填)</li>
+</ul>
+<h4 id="resultid-string">resultId - String</h4>
+<ul>
+<li>存储选择结果的容器Id（选填, 没有则不写入结果）</li>
+<li>Default: <code>&#39;&#39;</code></li>
+</ul>
+<h4 id="url-string">url - String</h4>
+<ul>
+<li>这里是 storeConfig.url 的简写形式，用于数据异步读取url（选填，不填的话可以手动设置树的数据）</li>
+<li>Default: <code>&#39;&#39;</code></li>
+</ul>
+<h4 id="param-object">param - Object</h4>
+<ul>
+<li>这里是 storeConfig.param 的简写形式，用于数据读取的初始化参数，与 url 配合使用（选填）</li>
+<li>Default: <code>{}</code></li>
+</ul>
+<h4 id="data-array">data - Array</h4>
+<ul>
+<li>这里是 storeConfig.data 的简写形式，在不配置url的时候，可以用来直接配置数据（选填）</li>
+<li>Default: <code>[]</code></li>
+</ul>
+<h4 id="idkey-string">idKey - String</h4>
+<ul>
+<li>这里是 storeConfig.idKey 的简写形式，用于标识节点数据中，id的key（选填, 不填的话默认是 adapterForNode.id）</li>
+<li>Default: <code>adapterForNode.id</code></li>
+</ul>
+<h4 id="isjsonp-boolean">isJsonp - Boolean</h4>
+<ul>
+<li>这里是 storeConfig.isJsonp 的简写形式，用于选择是否用jsonp形式发送请求</li>
+<li>Default: <code>false</code></li>
+</ul>
+<h4 id="storeconfig-object">storeConfig - Object</h4>
+<ul>
+<li>在这里进行store的配置，具体配置项请参见Trees.Sore（选填）</li>
+<li>Default: <code>{}</code></li>
+</ul>
+<h4 id="store-object">store - Object</h4>
+<ul>
+<li>可以直接传入store对象（选填）</li>
+<li>Default: <code>null</code></li>
+</ul>
+<h4 id="resulttype-string">resultType - String</h4>
+<ul>
+<li>获取结果的类型 可选填的值有：&#39;result&#39;, &#39;id&#39;, &#39;value&#39;, &#39;path&#39;, &#39;valuePath&#39;, &#39;valueStr&#39; 可以组合多个类型的值 用<strong>空格</strong>隔开 </li>
+<li>注意：只有&#39;result&#39;, &#39;id&#39;, &#39;path&#39;三种类型支持回显</li>
+<li>Default: <code>&#39;result&#39;</code></li>
+</ul>
+<h4 id="contenttemplate-string">contentTemplate - String</h4>
+<ul>
+<li>节点文案显示模板(KISSY.XTemplate)，默认只显示value</li>
+<li>Default: <code>&#39;&#39;</code></li>
+</ul>
+<h3 id="-">支持的方法</h3>
+<h4 id="getresultmanage-">getResultManage()</h4>
+<ul>
+<li>获取结果对象 结果管理器中可以存放单结果，也可以存放多结果，根据不同树的使用场景不同 而下面的取结果方法，都可以正确的取到结果，一个值或是数组</li>
+<li>Returns: (Array)  结果集列表  </li>
+</ul>
+<h4 id="getidfromresult-">getIdFromResult()</h4>
+<ul>
+<li>获取选中结果的ID</li>
+<li>Returns: (Number|String|Array) 选中结果的ID </li>
+</ul>
+<h4 id="getidfromdata-data-">getIdFromData(data)</h4>
+<ul>
+<li>从数据中，获取ID</li>
+<li><code>data</code> - Array - 类似结果管理器的数据，为null,则直接取结果管理器</li>
+<li>Returns: (Number|String|Array) 选中结果的ID </li>
+</ul>
+<h4 id="getidformresultinput-">getIdFormResultInput()</h4>
+<ul>
+<li>从存储结果的input中获取id, 根据 resultType</li>
+<li><code>data</code> - Array - 类似结果管理器的数据，为null,则直接取结果管理器</li>
+<li>Returns: (Number|String|Array) 获取的ID </li>
+</ul>
+<h4 id="getpathfromresult-">getPathFromResult()</h4>
+<ul>
+<li>获取结果的ID路径</li>
+<li>Returns: (Array) ID路径  </li>
+</ul>
+<h4 id="getpathfromdata-data-">getPathFromData(data)</h4>
+<ul>
+<li>从数据中，获取ID路径</li>
+<li><code>data</code> - Array - 类似结果管理器的数据，为null,则直接取结果管理器</li>
+<li>Returns: (Array) ID路径  </li>
+</ul>
+<h4 id="getvaluefromresult-">getValueFromResult()</h4>
+<ul>
+<li>获取选中结果的velue</li>
+<li>Returns: (String|Array) 选中结果的velue   </li>
+</ul>
+<h4 id="getvaluefromdata-data-">getValueFromData(data)</h4>
+<ul>
+<li>从数据中，获取velue</li>
+<li><code>data</code> - Array - 类似结果管理器的数据，为null,则直接取结果管理器</li>
+<li>Returns: (String|Array) 选中结果的velue   </li>
+</ul>
+<h4 id="getvaluepathfromresult-">getValuePathFromResult()</h4>
+<ul>
+<li>获取结果的value路径</li>
+<li>Returns: (Array) value路径 </li>
+</ul>
+<h4 id="getvaluepathfromdata-data-">getValuePathFromData(data)</h4>
+<ul>
+<li>从数据中，获取value路径</li>
+<li><code>data</code> - Array - 类似结果管理器的数据，为null,则直接取结果管理器</li>
+<li>Returns: (Array) value路径   </li>
+</ul>
+<h4 id="getvaluestrfromresult-joinstr-">getValueStrFromResult(joinStr)</h4>
+<ul>
+<li>获取结果的value路径字符串形式</li>
+<li><code>joinStr</code> - String - 连接符(选填)，默认为 &#39; &gt; &#39;</li>
+<li>Returns: (String|Array) value路径字符串形式 </li>
+</ul>
+<h4 id="getvaluestrfromdata-data-joinstr-">getValueStrFromData(data, joinStr)</h4>
+<ul>
+<li>从数据中，获取value路径字符串形式</li>
+<li><code>data</code> - Array - 类似结果管理器的数据，为null,则直接取结果管理器</li>
+<li><code>joinStr</code> - String - 连接符(选填)，默认为 &#39; &gt; &#39;</li>
+<li>Returns: (String|Array) value路径字符串形式 </li>
+</ul>
+<h4 id="getallleafsfromresult-">getAllLeafsFromResult()</h4>
+<ul>
+<li>从结果管理器中，获取所有叶子节点列表</li>
+<li>Returns: (Array) 所有叶子节点的节点路径 </li>
+</ul>
+<h4 id="getallleafsfromdata-data-">getAllLeafsFromData(data)</h4>
+<ul>
+<li>从数据中，获取所有叶子节点列表</li>
+<li><code>data</code> - Array - 类似结果管理器的数据，为null,则直接取结果管理器</li>
+<li>Returns: (Array) 所有叶子节点的节点路径  </li>
+</ul>
+<h4 id="isblankresult-data-">isBlankResult([data])</h4>
+<ul>
+<li>判断当前结果集是否为空</li>
+<li><code>data</code> - Array - 类似结果管理器的数据(选填)，为null,则直接取结果管理器</li>
+<li>Returns: (Boolean) 是否为空   </li>
+</ul>
+<h4 id="isleafresult-data-">isLeafResult([data])</h4>
+<ul>
+<li>判断当前结果是不是叶子节点 如果是多结果，则只有全都是叶子节点 才返回true</li>
+<li><code>data</code> - Array - 类似结果管理器的数据(选填)，为null,则直接取结果管理器</li>
+<li>Returns: (Boolean) 是否是叶子节点 若结果集为空，也会返回false </li>
+</ul>
+<h4 id="ismultipleresult-data-">isMultipleResult([data])</h4>
+<ul>
+<li>判断结果是否为多结果</li>
+<li><code>data</code> - Array - 类似结果管理器的数据(选填)，为null,则直接取结果管理器</li>
+<li>Returns: (Boolean) 是否为多结果</li>
+</ul>
+<h4 id="traverseresul-func-data-">traverseResul(func, [data])</h4>
+<ul>
+<li>多结果管理功能 遍历结果管理器</li>
+<li><code>data</code> - Array - 类似结果管理器的数据(选填)，为null,则直接取结果管理器</li>
+<li><code>func</code> - Function - 需要执行的方法 参数为单结果对象</li>
+<li>Returns: (String|Array) 处理之后的数据 </li>
+</ul>
+<h4 id="getstore-data-">getStore(data)</h4>
+<ul>
+<li>获取Trees.Store对象</li>
+<li>Returns: (Object) Trees.Store对象</li>
+</ul>
+<h4 id="reload-param-">reload(param)</h4>
+<ul>
+<li>调用store的load方法，重新载入整树数据</li>
+<li><code>param</code> - Object - 参数对象</li>
+</ul>
+<h4 id="searchtree-searchtext-">searchTree(searchText)</h4>
+<ul>
+<li>调用store的searchTree方法，通过文本搜索树 此方法会触发searchTree事件</li>
+<li><code>searchText</code> - String - 要搜索的文本</li>
+<li>Returns: (Object)  搜索结果</li>
+</ul>
+<h4 id="storeload-param-">storeLoad([param])</h4>
+<ul>
+<li>调用store的searchTree方法，通过文本搜索树 此方法会触发searchTree事件</li>
+<li><code>param</code> - Object|String|Array - 参数对象 或 需要加载的id (不填则取默认的参数对象，若是String，则会用idKey配置参数对象) 或想设置的数据</li>
+</ul>
+<h4 id="initdata-param-">initData([param])</h4>
+<ul>
+<li>根据resultInput的值 初始化数据 触发 initData 事件</li>
+<li>Returns: (Number|String|Array)  需要初始化的id 或 id列表</li>
+</ul>
+<h4 id="destroy-">destroy()</h4>
+<ul>
+<li>销毁Trees.Base对象</li>
+</ul>
+<h3 id="-">支持的事件</h3>
+<h4 id="load">load</h4>
+<ul>
+<li>代理Trees.Store的load事件，树的数据加载完成后，触发此事件</li>
+<li><code>e.data</code> - 加载的数据</li>
+<li><code>e.id</code> - 父节点id</li>
+<li><code>e.param</code> - 加载参数</li>
+</ul>
+<h4 id="loadtree">loadTree</h4>
+<ul>
+<li>tree载入，在数据load结束后，数据初始化之前触发</li>
+</ul>
+<h4 id="initdata">initData</h4>
+<ul>
+<li>数据初始化，在数据load结束后，并且tree载入完成时触发</li>
+<li><code>e.id</code> - 需要初始化的节点id或id列表</li>
+</ul>
+<h4 id="loadfinished">loadFinished</h4>
+<ul>
+<li>树全部加载完成后触发</li>
+<li>load系列事件触发顺序： <code>(beforeReload -&gt;) load -&gt; loadTree -&gt; initData -&gt; loadFinished</code></li>
+</ul>
+<h4 id="beforereload">beforeReload</h4>
+<ul>
+<li>重新载入树数据，在载入之前触发</li>
+</ul>
+<h4 id="resultpop">resultPop</h4>
+<ul>
+<li>弹出结果集堆栈时触发该事件</li>
+<li><code>e.resultObj</code> - 弹出的结果对象</li>
+<li><code>e.result</code> - 当前结果集</li>
+</ul>
+<h4 id="resultpush">resultPush</h4>
+<ul>
+<li>压入结果集堆栈时触发该事件</li>
+<li><code>e.resultObj</code> - 新增的结果对象</li>
+<li><code>e.result</code> - 当前结果集</li>
+</ul>
+<h4 id="resultupdate">resultUpdate</h4>
+<ul>
+<li>结果集更新是时触发该事件， resultPop 和 resultPush 都会触发</li>
+<li><code>e.result</code> - 当前结果集</li>
+</ul>
+<h4 id="searchtree">searchTree</h4>
+<ul>
+<li>代理Trees.Store的searchTree事件 通过text遍历搜索树后 触发此事件</li>
+<li><code>e.text</code> - 搜索的文本值</li>
+<li><code>e.pathList</code> - 搜索的路径id集合</li>
+<li><code>e.valuePathList</code> - 搜索的路径value集合</li>
+<li><code>e.result</code> - 搜索结果</li>
+</ul>
+<h4 id="beforedestroy">beforeDestroy</h4>
+<ul>
+<li>在销毁对象前 触发此事件</li>
+</ul>
+<h3 id="-">使用技巧</h3>
+<h4 id="-">数据回显</h4>
+<ul>
+<li>需要将 <code>resultType</code> 所配置的结果，回写到 resultInput 中，即可回显结果</li>
+</ul>
+<pre><code>    // resultType: &#39;id&#39;
+    &lt;input type=&quot;hidden&quot; id=&quot;J_ListTreeResult&quot; value=&#39;{&quot;id&quot;:291}&#39;/&gt;
+</code></pre><h2 id="trees-viewstore">Trees.ViewStore</h2>
+<ul>
+<li>模块名：<code>kg/trees/2.0.0/viewstore</code></li>
+<li>本模块提供了<strong>数据模块视图功能</strong>，供需要视图功能的树使用。</li>
+<li>继承了 Trees.Store，拥有 Trees.Store 所有属性、事件、方法</li>
+</ul>
+<h3 id="-">支持方法</h3>
+<h4 id="getviewmanager-">getViewManager()</h4>
+<ul>
+<li>获取视图管理器</li>
+<li>Returns: (Object)  视图管理器 </li>
+</ul>
+<h4 id="getviewindex-view-">getViewIndex(view)</h4>
+<ul>
+<li>通过view对象，获取视图的索引</li>
+<li><code>view</code> - Object - 视图对象</li>
+<li>Returns: (Number)  视图的索引  </li>
+</ul>
+<h4 id="getviewsbyid-id-">getViewsById(id)</h4>
+<ul>
+<li>通过id设置视图列表</li>
+<li><code>id</code> - String|Number - 选填，若没有则至返回一级菜单的视图</li>
+<li>Returns: (Object)  视图管理器  </li>
+</ul>
+<h4 id="getviewsbypath-path-">getViewsByPath(path)</h4>
+<ul>
+<li>通过path设置视图列表</li>
+<li><code>path</code> - Array - 选填，若没有则只返回一级菜单的视图</li>
+<li>Returns: (Object)  视图管理器  </li>
+</ul>
+<h4 id="searchview-searchtext-index-">searchView(searchText, index)</h4>
+<ul>
+<li>通过文本搜索视图 此方法会触发searchView事件</li>
+<li><code>searchText</code> - String - 要搜索的文本</li>
+<li><code>index</code> - Number - 要搜索的视图索引</li>
+<li>Returns: (Array)  搜索结果节点数据列表</li>
+</ul>
+<h3 id="-">支持事件</h3>
+<h4 id="popview">popView</h4>
+<ul>
+<li>弹出视图堆栈时 触发此事件</li>
+<li><code>e.view</code> - 弹出堆栈的视图</li>
+</ul>
+<h4 id="pushview">pushView</h4>
+<ul>
+<li>压入视图堆栈时 触发此事件</li>
+<li><code>e.view</code> - 压入堆栈的视图</li>
+</ul>
+<h4 id="poppath">popPath</h4>
+<ul>
+<li>弹出路径堆栈时 触发此事件</li>
+<li><code>e.id</code> - 弹出堆栈的id</li>
+<li><code>e.path</code> - 弹出后路径</li>
+</ul>
+<h4 id="pushpath">pushPath</h4>
+<ul>
+<li>压入路径堆栈时 触发此事件</li>
+<li><code>e.id</code> - 压入堆栈的id</li>
+<li><code>e.path</code> - 压入后路径</li>
+</ul>
+<h4 id="changeselect">changeSelect</h4>
+<ul>
+<li>视图选中项改变时 触发此事件</li>
+<li><code>e.id</code> - 视图对象</li>
+<li><code>e.view</code> - 选中的节点id</li>
+</ul>
+<h4 id="searchview">searchView</h4>
+<ul>
+<li>通过text遍历视图搜索后 触发此事件</li>
+<li><code>e.text</code> - 搜索的文本值</li>
+<li><code>e.data</code> - 搜索结果</li>
+<li><code>e.index</code> - 搜索的视图在视图列表里的索引值</li>
+</ul>
+<h2 id="trees-view">Trees.View</h2>
+<ul>
+<li>模块名：<code>kg/trees/2.0.0/view</code></li>
+<li>本模块提供了<strong>视图功能树</strong>的基本功能。</li>
+<li>继承了 Trees.Base，拥有 Trees.Base 所有属性、事件、方法</li>
+</ul>
+<h3 id="-">支持方法</h3>
+<h4 id="getlistmanager-">getListManager()</h4>
+<ul>
+<li>获取视图管理器</li>
+<li>Returns: (Object)  视图管理器对象 </li>
+</ul>
+<h4 id="updatelistsbyid-id-">updateListsById(id)</h4>
+<ul>
+<li>根据id更新视图</li>
+<li><code>id</code> - String|Number - 目标id</li>
+</ul>
+<h4 id="updatelistsbypath-path-">updateListsByPath(path)</h4>
+<ul>
+<li>根据id路径更新视图</li>
+<li><code>path</code> - Array - id路径</li>
+</ul>
+<h4 id="clearselect-">clearSelect()</h4>
+<ul>
+<li>清空所选</li>
+</ul>
+<h4 id="reloadlists-">reloadLists()</h4>
+<ul>
+<li>根据当前结果、当前数据，重新渲染所有视图</li>
+</ul>
+<h3 id="-">支持事件</h3>
+<h4 id="poplist">popList</h4>
+<ul>
+<li>弹出list堆栈时触发此事件</li>
+<li><code>e.list</code> - 弹出的list对象</li>
+</ul>
+<h4 id="pushlist">pushList</h4>
+<ul>
+<li>压入list堆栈时触发此事件</li>
+<li><code>e.list</code> - 压入的list对象</li>
+</ul>
+<h4 id="changeselectbyclick">changeSelectByClick</h4>
+<ul>
+<li>通过视图的主动点击 从而改变视图的已选项时 触发此事件</li>
+<li><code>e.list</code> - 改变的视图对象</li>
+<li><code>e.item</code> - 改变的数据项</li>
+<li><code>e.index</code> - 视图在视图管理器中的索引值</li>
+</ul>
+<h4 id="changeselectbystore">changeSelectByStore</h4>
+<ul>
+<li>通过store对象触发 从而改变视图的已选项时 触发此事件</li>
+<li><code>e.list</code> - 改变的视图对象</li>
+<li><code>e.item</code> - 改变的数据项</li>
+</ul>
+<h4 id="itemchangeselect">itemChangeSelect</h4>
+<ul>
+<li>手动触发改变选项时 触发此事件</li>
+<li><code>e.item</code> - 触发的选项对象</li>
+<li><code>e.data</code> - 该选项上绑定的数据</li>
+<li><code>e.index</code> - 该视图在视图管理器中的索引值</li>
+</ul>
+<h4 id="pathupdate">pathUpdate</h4>
+<ul>
+<li>视图管理器的视图路径更新时触发此事件 用于驱动视图的更新</li>
+<li><code>e.path</code> - 更新后的path</li>
+</ul>
+<h4 id="changed">changed</h4>
+<ul>
+<li>发生变更时，触发（最后一个resultUpdate之后触发）</li>
+<li><code>e.path</code> - 更新后的path</li>
+</ul>
+<h2 id="trees-list">Trees.List</h2>
+<ul>
+<li>模块名：<code>kg/trees/2.0.0/list</code></li>
+<li>本模块提供了<strong>多级列表选择框</strong>。</li>
+<li>继承了 Trees.View，拥有 Trees.View 所有属性、事件、方法</li>
+</ul>
+<h3 id="config-">config 属性配置</h3>
+<h4 id="listnum-number">listNum - Number</h4>
+<ul>
+<li>list的可视区域展示数量 (选填)</li>
+<li>Default: <code>4</code></li>
+</ul>
+<h4 id="listwidth-number">listWidth - Number</h4>
+<ul>
+<li>单个list宽度 (选填)</li>
+<li>Default: <code>215</code></li>
+</ul>
+<h4 id="searchtip-string">searchTip - String</h4>
+<ul>
+<li>视图搜索框的提示文案 (选填)</li>
+<li>Default: <code>&#39;&#39;</code></li>
+</ul>
+<h3 id="dom-">DOM结构</h3>
+<pre><code>&lt;div id=&quot;J_ListTree&quot;&gt;&lt;/div&gt;
+&lt;input type=&quot;hidden&quot; id=&quot;J_ListTreeResult&quot;/&gt;
+</code></pre><h3 id="-">初始化</h3>
+<pre><code>S.use(&#39;kg/trees/2.0.0/list&#39;, function (S, List) {
+    new List({
+        renderTo: &#39;J_ListTree&#39;,
+        resultId: &#39;J_ListTreeResult&#39;,
+        url: &#39;data.html&#39;,
+        searchTip: &#39;关键字&#39;,
+        resultType: &#39;id&#39;
+    });    
+});
+</code></pre><h2 id="trees-select">Trees.Select</h2>
+<ul>
+<li>模块名：<code>kg/trees/2.0.0/select</code></li>
+<li>本模块提供了<strong>多级联动下拉选择框</strong>。</li>
+<li>继承了 Trees.View，拥有 Trees.View 所有属性、事件、方法</li>
+</ul>
+<h3 id="config-">config 属性配置</h3>
+<h4 id="selectcls-string">selectCls - String</h4>
+<ul>
+<li>select元素的class (选填)</li>
+<li>Default: <code>&#39;&#39;</code></li>
+</ul>
+<h4 id="selecttpl-string">selectTpl - String</h4>
+<ul>
+<li>形成select的模版 (选填)</li>
+<li>Default: <code>&#39;&lt;select&gt;&lt;/select&gt;&#39;</code></li>
+</ul>
+<h3 id="dom-">DOM结构</h3>
+<pre><code>&lt;div id=&quot;J_SelectTree&quot;&gt;&lt;/div&gt;
+&lt;input type=&quot;hidden&quot; id=&quot;J_SelectTreeResult&quot;/&gt;
+</code></pre><h3 id="-">初始化</h3>
+<pre><code>S.use(&#39;kg/trees/2.0.0/select&#39;, function (S, Select) {
+    new Select({
+        renderTo: &#39;J_SelectTree&#39;,
+        resultId: &#39;J_SelectTreeResult&#39;,
+        url: &#39;data.html&#39;,
+        resultType: &#39;id&#39;
+    });
+});
+</code></pre><h2 id="trees-city">Trees.City</h2>
+<ul>
+<li>模块名：<code>kg/trees/2.0.0/city</code></li>
+<li>本模块提供了<strong>城市联动框</strong>。</li>
+<li>继承了 Trees.Select，拥有 Trees.Select 所有属性、事件、方法</li>
+</ul>
+<h3 id="config-">config 属性配置</h3>
+<h4 id="citytype-number">cityType - Number</h4>
+<ul>
+<li>城市数据类型 0 代表 省市数据; 1 代表 省市区 数据; 2 代表 省市区-简单版 数据;</li>
+<li>Default: <code>0</code></li>
+</ul>
+<pre><code>    0 代表 省市数据; 
+    1 代表 省市区 数据; 
+    2 代表 省市区-简单版 数据;
+</code></pre><h4 id="resulttype-string">resultType - String</h4>
+<ul>
+<li>结果类型 默认为 &#39;path&#39;</li>
+<li>Default: <code>&#39;path&#39;</code></li>
+</ul>
+<h3 id="dom-">DOM结构</h3>
+<pre><code>&lt;div id=&quot;J_CityTree&quot;&gt;&lt;/div&gt;
+&lt;input type=&quot;hidden&quot; id=&quot;J_CityTreeResult&quot;/&gt;
+</code></pre><h3 id="-">初始化</h3>
+<pre><code>S.use(&#39;kg/trees/2.0.0/city&#39;, function (S, City) {
+    new City({
+        renderTo: &#39;J_CityTree&#39;,
+        resultId: &#39;J_CityTreeResult&#39;,
+        cityType: 1
+    });
+});
+</code></pre><h2 id="trees-tree-base-kissy-tree-">Trees.Tree (Base KISSY.Tree)</h2>
+<ul>
+<li>模块名：<code>kg/trees/2.0.0/tree</code></li>
+<li>本模块提供了<strong>标准树形菜单</strong>。</li>
+<li>继承了 Trees.Base，拥有 Trees.Base 所有属性、事件、方法</li>
+</ul>
+<h3 id="config-">config 属性配置</h3>
+<h4 id="checkable-boolean">checkable - Boolean</h4>
+<ul>
+<li>是否为多选树 （选填）</li>
+<li>Default: <code>false</code></li>
+</ul>
+<h4 id="showrootnode-boolean">showRootNode - Boolean</h4>
+<ul>
+<li>是否初始展示一级节点 （选填）</li>
+<li>Default: <code>true</code></li>
+</ul>
+<h4 id="showall-boolean">showAll - Boolean</h4>
+<ul>
+<li>是否初始展示全部节点 （选填）</li>
+<li>Default: <code>false</code></li>
+</ul>
+<h4 id="islazyload-boolean">isLazyLoad - Boolean</h4>
+<ul>
+<li>是否使用懒加载来优化多节点效率问题 默认不使用 （选填）</li>
+<li>Default: <code>false</code></li>
+</ul>
+<h4 id="lazycount-number">lazyCount - Number</h4>
+<ul>
+<li>懒加载步长</li>
+<li>Default: <code>5</code></li>
+</ul>
+<h4 id="lazytime-number">lazyTime - Number</h4>
+<ul>
+<li>懒加载间隔</li>
+<li>Default: <code>300</code></li>
+</ul>
+<h4 id="title-string">title - String</h4>
+<ul>
+<li>tree根节点的标题</li>
+<li>Default: <code>&#39;Tree&#39;</code></li>
+</ul>
+<h4 id="prefixcls-string">prefixCls - String</h4>
+<ul>
+<li>树html节点class前缀，用于自定义皮肤 （选填）</li>
+<li>Default: <code>&#39;&#39;</code></li>
+</ul>
+<h3 id="-">支持方法</h3>
+<h4 id="shownodebyid-id-">showNodeById(id)</h4>
+<ul>
+<li>通过id定位并选中节点 id可为id列表</li>
+<li><code>id</code> - String|Number|Array - 视id或id列表</li>
+<li>Returns: (Object)  自身对象   </li>
+</ul>
+<h4 id="shownodebypath-path-">showNodeByPath(path)</h4>
+<ul>
+<li>通过path定位并选中节点 path可为path列表</li>
+<li><code>path</code> - Array - path或path列表</li>
+<li>Returns: (Object)  自身对象   </li>
+</ul>
+<h4 id="getchildrenbynode-node-">getChildrenByNode(node)</h4>
+<ul>
+<li>获取节点的子节点</li>
+<li><code>node</code> - Object - 目标节点</li>
+<li>Returns: (Array)   子节点列表    </li>
+</ul>
+<h4 id="getnodechildrendata-node-">getNodeChildrenData(node)</h4>
+<ul>
+<li>获取节点的子节点数据</li>
+<li><code>node</code> - Object - 节点对象</li>
+<li>Returns: (Array)   子节点数据   </li>
+</ul>
+<h4 id="gettree-">getTree()</h4>
+<ul>
+<li>获取 KISSY.Tree 对象</li>
+<li>Returns: (Object)  KISSY.Tree 对象   </li>
+</ul>
+<h4 id="gettreeresult-">getTreeResult()</h4>
+<ul>
+<li>遍历树的选择结果 会触发 resultUpdate 事件</li>
+<li>Returns: (Array) 结果集 </li>
+</ul>
+<h4 id="clearselect-">clearSelect()</h4>
+<ul>
+<li>清空树的选中，初始化树的展开状态</li>
+<li>Returns: (Object)  自身对象   </li>
+</ul>
+<h4 id="addnodes-node-islazyload-">addNodes(node, isLazyLoad)</h4>
+<ul>
+<li>给节点增加子节点 子节点数据由这个节点的id在store中查询而来</li>
+<li><code>node</code> - Object - 目标节点对象</li>
+<li><code>isLazyLoad</code> - Boolean - 是否启用异步懒加载</li>
+<li>Returns: (Object)  添加子节点后的节点对象    </li>
+</ul>
+<h4 id="inittreenode-isshowrootnode-">initTreeNode(isShowRootNode)</h4>
+<ul>
+<li>给初始化树的节点</li>
+<li><code>isShowRootNode</code> - Boolean - 是否是根节点</li>
+</ul>
+<h4 id="isnodeselected-node-">isNodeSelected(node)</h4>
+<ul>
+<li>判断目标节点是否为选中状态</li>
+<li><code>node</code> - Object - 目标节点对象</li>
+<li>Returns: (Boolean)  是否选中    </li>
+</ul>
+<h4 id="nodecollapse-node-">nodeCollapse(node)</h4>
+<ul>
+<li>收起节点</li>
+<li><code>node</code> - Object - 目标节点对象</li>
+</ul>
+<h4 id="nodeexpand-node-">nodeExpand(node)</h4>
+<ul>
+<li>展开节点</li>
+<li><code>node</code> - Object - 目标节点对象</li>
+</ul>
+<h4 id="nodeselect-node-isselect-">nodeSelect(node, [isSelect])</h4>
+<ul>
+<li>选中节点，会触发 selected 事件</li>
+<li><code>node</code> - Object - 目标节点对象</li>
+<li><code>isSelect</code> - Boolean - 是否需要选中 默认为true</li>
+<li>Returns: (Object)  自身对象   </li>
+</ul>
+<h4 id="resettitle-title-">resetTitle(title)</h4>
+<ul>
+<li>重置树的标题</li>
+<li><code>title</code> - String - 标题</li>
+</ul>
+<h3 id="-">支持事件</h3>
+<h4 id="click">click</h4>
+<ul>
+<li>代理 KISSY.Tree 的 click 事件 当树节点被点击后触发</li>
+<li><code>e.targetNode</code> - 树的节点对象</li>
+</ul>
+<h4 id="selected">selected</h4>
+<ul>
+<li>节点选中后触发的事件，<strong>注意：点击节点的时候，不会触发该事件，只会触发click</strong></li>
+<li><code>e.targetNode</code> - 树的节点对象</li>
+</ul>
+<h4 id="collapse">collapse</h4>
+<ul>
+<li>代理 KISSY.Tree 的 collapse 事件 当树节点收缩后触发</li>
+<li><code>e.targetNode</code> - 树的节点对象</li>
+</ul>
+<h4 id="expand">expand</h4>
+<ul>
+<li>代理 KISSY.Tree 的 expand 事件 当树节点扩展后触发</li>
+<li><code>e.targetNode</code> - 树的节点对象</li>
+</ul>
+<h3 id="dom-">DOM结构</h3>
+<pre><code>&lt;div id=&quot;J_Tree&quot;&gt;&lt;/div&gt;
+&lt;input type=&quot;hidden&quot; id=&quot;J_TreeResult&quot;/&gt;
+</code></pre><h3 id="-">初始化</h3>
+<pre><code>S.use(&#39;kg/trees/2.0.0/tree&#39;, function (S, Tree) {
+    new Tree({
+        renderTo: &#39;J_Tree&#39;,
+        resultId: &#39;J_TreeResult&#39;,
+        url: &#39;data.html&#39;,
+        title: &#39;Demo Tree&#39;,
+        checkable: true,
+        isLazyLoad: true,
+        resultType: &#39;id&#39;
+    });
+});
+</code></pre>
+          <div style="display:none;"><script type="text/javascript" src="http://tajs.qq.com/stats?sId=36378479" charset="UTF-8"></script></div>
+          <script src="http://docs.kissyui.com/1.4/source/guideline/templates/assets/com.js"></script>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
